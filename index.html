@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+
+<p><b>Actual radial:</b> <span id="actualRadial"></span></p>
+<p><b>Holding radial:</b> <span id="holdingRadial"></span>&nbsp;<span id="holdingDirection"></span>&nbsp;<span id="turnDirection"></span></p>
+<button class="answerButton" id="Parallel" onclick="checkResult(this.innerText)">Parallel</button>
+<button class="answerButton" id="Teardrop" onclick="checkResult(this.innerText)">Teardrop</button>
+<button class="answerButton" id="Direct" onclick="checkResult(this.innerText)">Direct</button><br><br>
+<button class="answerButton" id="Direct close to Parallel" onclick="checkResult(this.innerText)">Direct close to Parallel</button>
+<button class="answerButton" id="Direct close to Teardrop" onclick="checkResult(this.innerText)">Direct close to Teardrop</button><br><br>
+<button onclick="location.reload();">Refresh</button>
+
+<script>
+addZero = (number) => (number<10) ? "00"+number : ((number<100) ? "0"+number : number);
+holdingDegree = () => (Math.floor((Math.random() * 360) + 1));
+oppositeRadial = (inbOutb, holdingRadial) => (inbOutb == "Outbound") ? ((holdingRadial + 180) % 360) : holdingRadial;
+
+actualRadial = holdingDegree();
+holdingRadial = holdingDegree();
+inbOutb = ((Math.floor(Math.random() * 2)) ? 'Inbound' : 'Outbound');
+turnDirection = ((Math.floor(Math.random() * 2)) ? 'Left' : 'Right');
+inboundCourse = oppositeRadial(inbOutb, holdingRadial);
+
+zeroRefCourse = actualRadial - inboundCourse;
+zeroRefCourse = (zeroRefCourse+360)%360;
+
+console.log('Actual: ' + actualRadial);
+console.log('Heading: ' + ((actualRadial + 180) % 360));
+console.log('Holding: ' + holdingRadial);
+console.log('inboundCourse: ' + inboundCourse);
+console.log(inbOutb);
+console.log('turnDirection: ' + turnDirection);
+console.log('zeroRefCourse: ' + zeroRefCourse);
+
+if (turnDirection == 'Right') {
+	//Right
+	if (zeroRefCourse < 110) entry = 'Parallel';
+	else if (zeroRefCourse < 140) entry = 'Direct close to Parallel';
+	else if (zeroRefCourse < 250) entry = 'Direct';
+	else if (zeroRefCourse < 290) entry = 'Direct close to Teardrop';
+	else entry = 'Teardrop';
+} else {
+	// Left
+	if (zeroRefCourse < 70) entry = 'Teardrop';
+	else if (zeroRefCourse < 110) entry = 'Direct close to Teardrop';
+	else if (zeroRefCourse < 220) entry = 'Direct';
+	else if (zeroRefCourse < 250) entry = 'Direct close to Parallel';
+	else entry = 'Parallel';
+}
+console.log(entry);
+
+document.getElementById("actualRadial").innerHTML = addZero(actualRadial);
+
+document.getElementById("holdingRadial").innerHTML = addZero(holdingRadial);
+document.getElementById("holdingDirection").innerHTML = inbOutb;
+document.getElementById("turnDirection").innerHTML = turnDirection;
+
+function checkResult(value) {
+	const elements = document.querySelectorAll(".answerButton");
+		elements.forEach(function (element) {
+		element.disabled = true
+	});
+	document.getElementById(entry).style.backgroundColor = "green";
+	document.getElementById(entry).style.color = "white";
+	if (entry!=value) {
+		document.getElementById(value).style.backgroundColor = "red";
+		document.getElementById(value).style.color = "white";
+	}
+}
+</script>
+
+</body>
+</html>
